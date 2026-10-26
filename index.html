@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BOUESTI secure SUG electronic voting portal." />
+  <title>BOUESTI Vote | SUG Election Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to voting form</a>
+
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BOUESTI Vote home">
+      <span class="brand-mark">✓</span>
+      <span>BOUESTI<span>Vote</span></span>
+    </a>
+
+    <div class="election-status" id="electionStatusBadge">
+      <span class="status-dot" id="electionStatusDot"></span>
+      <span id="electionStatusText">Checking election status…</span>
+    </div>
+
+    <button class="text-button" type="button" id="helpButton">Need help?</button>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="rehearsal-banner" id="rehearsalBanner" hidden>
+        <strong>Rehearsal mode.</strong>
+        This is a practice run. Votes cast now are test data and will be erased before the real election.
+      </div>
+
+      <div class="vote-confirmation" id="voteConfirmation" hidden>
+        <span class="vote-confirmation-icon" aria-hidden="true">✓</span>
+        <p>
+          Your vote has been recorded. Thank you for participating in the
+          BOUESTI SUG election!
+        </p>
+        <button
+          class="vote-confirmation-close"
+          type="button"
+          id="dismissConfirmation"
+          aria-label="Dismiss this message"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="election-closed-notice vote-confirmation" id="announcementBanner" hidden>
+        <p>
+          <strong>Notice:</strong> <span id="announcementText"></span>
+        </p>
+        <button
+          class="vote-confirmation-close"
+          type="button"
+          id="dismissAnnouncement"
+          aria-label="Dismiss this notice"
+        >
+          ×
+        </button>
+      </div>
+
+      <p class="eyebrow" id="electionNameEyebrow">BOUESTI Student Union Government</p>
+      <h1>Your voice belongs<br />in the room.</h1>
+      <p>
+        Cast one secure, verified ballot for the leaders who will shape
+        BOUESTI campus life.
+      </p>
+    </section>
+
+    <section class="results-section" id="resultsSection" aria-label="Election results" hidden>
+      <div class="card results-card">
+        <p class="section-label">Official results</p>
+        <h2 id="resultsTitle">Results</h2>
+        <p class="muted" id="resultsMeta"></p>
+        <div id="resultsBody"></div>
+        <p class="small-print" id="resultsSignature"></p>
+      </div>
+    </section>
+
+    <section class="voting-shell" aria-label="Secure voting process" id="votingShell">
+      <ol class="steps" aria-label="Voting progress">
+        <li class="step active" data-step="1"><span>1</span><b>Log in</b></li>
+        <li class="step" data-step="2"><span>2</span><b>Verify identity</b></li>
+        <li class="step" data-step="3"><span>3</span><b>Choose candidates</b></li>
+        <li class="step" data-step="4"><span>4</span><b>Review & submit</b></li>
+      </ol>
+
+      <div class="card">
+        <!-- Step 1: Login -->
+        <section class="panel active-panel" id="loginPanel">
+          <div class="panel-heading">
+            <div class="icon-circle">⌁</div>
+            <div>
+              <p class="section-label">Step 1 of 4</p>
+              <h2>Log in to vote</h2>
+            </div>
+          </div>
+
+          <p class="election-closed-notice" id="electionClosedNotice" hidden></p>
+
+          <div class="vote-confirmation" id="alreadyVotedNotice" hidden>
+            <span class="vote-confirmation-icon" aria-hidden="true">✓</span>
+            <p id="alreadyVotedText">
+              Your vote has already been recorded. Please remain calm — the
+              election results will be out soon.
+            </p>
+          </div>
+
+          <p class="election-closed-notice" id="notEligibleNotice" hidden></p>
+
+          <p class="muted">
+            A successful BOUESTI student login is required before ballot access.
+          </p>
+
+          <form id="loginForm" novalidate>
+            <label for="matricNumber">Matriculation number</label>
+            <input
+              id="matricNumber"
+              type="text"
+              inputmode="numeric"
+              autocomplete="username"
+              placeholder="Digits only, e.g. 152637"
+              maxlength="15"
+              required
+            />
+
+            <label for="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Enter your student portal password"
+              required
+            />
+
+            <p class="field-note">
+              Enter your matric number as <strong>digits only</strong> — no
+              letters, spaces or prefix.
+            </p>
+
+            <p class="form-message" id="loginMessage" role="alert"></p>
+
+            <button class="button primary" type="submit" id="loginButton">
+              Log in securely <span>→</span>
+            </button>
+          </form>
+
+          <div class="security-note">
+            <span>♢</span>
+            <p>
+              <strong>Ballot access is protected.</strong>
+              Login confirms eligibility while your choices remain private.
+            </p>
+          </div>
+        </section>
+
+        <!-- Step 2: University email -->
+        <section class="panel" id="verifyPanel">
+          <button class="back" type="button" id="signOutButton">
+            ← Sign out
+          </button>
+
+          <div class="panel-heading">
+            <div class="icon-circle">✦</div>
+            <div>
+              <p class="section-label">Step 2 of 4</p>
+              <h2>Verify your identity</h2>
+            </div>
+          </div>
+
+          <p class="muted">
+            Enter your university-registered email. A six-digit code will be
+            sent to it.
+          </p>
+
+          <form id="identityForm" novalidate>
+            <p class="signed-in-as">
+              Signed in as matric number <strong id="signedInMatric"></strong>
+            </p>
+
+            <label for="universityEmail">University email address</label>
+            <input
+              id="universityEmail"
+              type="email"
+              autocomplete="email"
+              placeholder="name@bouesti.edu.ng"
+              required
+            />
+
+            <p class="field-note">
+              Only registered <strong>@bouesti.edu.ng</strong> email addresses
+              can receive a code.
+            </p>
+
+            <p class="form-message" id="identityMessage" role="alert"></p>
+
+            <button class="button primary" type="submit" id="sendCodeButton">
+              Send secure code <span>→</span>
+            </button>
+          </form>
+        </section>
+
+        <!-- OTP -->
+        <section class="panel" id="otpPanel">
+          <button class="back" type="button" data-back="verifyPanel">
+            ← Use a different email
+          </button>
+
+          <div class="panel-heading">
+            <div class="icon-circle">✦</div>
+            <div>
+              <p class="section-label">Step 2 of 4 · OTP verification</p>
+              <h2>Enter your secure code</h2>
+            </div>
+          </div>
+
+          <p class="muted">
+            A six-digit code was sent to <strong id="maskedEmail"></strong>.
+            It expires in <strong id="timer">05:00</strong>.
+          </p>
+
+          <form id="otpForm" novalidate>
+            <label class="sr-only" for="otpInput">Six-digit OTP code</label>
+            <input
+              class="otp-input"
+              id="otpInput"
+              type="text"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              maxlength="6"
+              placeholder="••••••"
+              required
+            />
+
+            <p class="form-message" id="otpMessage" role="alert"></p>
+
+            <button class="button primary" type="submit" id="verifyButton">
+              Verify and continue <span>→</span>
+            </button>
+          </form>
+
+          <div class="resend-row">
+            <span>Didn't receive a code?</span>
+            <button class="text-button" type="button" id="resendButton">
+              Resend code
+            </button>
+          </div>
+
+          <p class="demo-note" id="demoNote" hidden></p>
+        </section>
+
+        <!-- Step 3: Ballot -->
+        <section class="panel" id="ballotPanel">
+          <div class="panel-heading">
+            <div class="icon-circle">✓</div>
+            <div>
+              <p class="section-label">Step 3 of 4</p>
+              <h2>Choose your candidates</h2>
+            </div>
+          </div>
+
+          <p class="muted">
+            Select one candidate for every SUG Central Executive Council office.
+          </p>
+
+          <form id="ballotForm">
+            <div id="ballotPositions"></div>
+
+            <p class="form-message" id="ballotMessage" role="alert"></p>
+
+            <button class="button primary" type="submit">
+              Review selections <span>→</span>
+            </button>
+          </form>
+        </section>
+
+        <!-- Step 4: Review -->
+        <section class="panel" id="reviewPanel">
+          <button class="back" type="button" data-back="ballotPanel">
+            ← Edit selections
+          </button>
+
+          <div class="panel-heading">
+            <div class="icon-circle">✓</div>
+            <div>
+              <p class="section-label">Step 4 of 4</p>
+              <h2>Review your ballot</h2>
+            </div>
+          </div>
+
+          <p class="muted">
+            Check all selections carefully. Submitted ballots cannot be changed.
+          </p>
+
+          <dl class="review-list" id="reviewList"></dl>
+
+          <label class="confirm-check">
+            <input type="checkbox" id="confirmVote" />
+            <span>I confirm these are my intended selections.</span>
+          </label>
+
+          <p class="form-message" id="reviewMessage" role="alert"></p>
+
+          <button class="button primary" type="button" id="submitVote">
+            Submit secure ballot <span>→</span>
+          </button>
+        </section>
+
+        <!-- Success -->
+        <section class="panel success-panel" id="successPanel">
+          <div class="success-mark">✓</div>
+          <p class="section-label">Ballot received</p>
+          <h2>Your vote is in.</h2>
+
+          <p class="muted">
+            Thank you for participating in the BOUESTI SUG election. Your
+            ballot receipt has been generated successfully.
+          </p>
+
+          <div class="receipt">
+            <span>Receipt ID</span>
+            <strong id="receiptId"></strong>
+          </div>
+
+          <p class="small-print">
+            Save this receipt. It confirms submission but does not reveal your
+            vote — nobody, including election officials, can link it to your
+            choices.
+          </p>
+
+          <button class="button secondary" type="button" id="returnHomeButton">Return to election home</button>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© 2026 BOUESTI Vote</span>
+    <span>Protected with encrypted verification</span>
+    <span>Ballots are never linked to voters</span>
+  </footer>
+
+  <!--
+    Sample BOUESTI SUG Election Rules for this build.
+    Replace with the Electoral Committee's official rules before real use.
+  -->
+  <dialog id="rulesDialog">
+    <h2>BOUESTI SUG Election Rules</h2>
+    <p class="muted">
+      Please read the rules below. Scroll to the end to unlock the checkbox,
+      then accept to continue to identity verification.
+    </p>
+
+    <div class="rules-body" id="rulesBody" tabindex="0">
+      <ol class="rules-list">
+        <li>
+          <strong>Eligibility.</strong> Only currently registered BOUESTI
+          students with a valid matriculation number and an active
+          @bouesti.edu.ng email address may vote in this election.
+        </li>
+        <li>
+          <strong>One vote per student.</strong> Each eligible student may
+          cast only one ballot. Attempting to vote more than once may lead to
+          disqualification of the ballots involved.
+        </li>
+        <li>
+          <strong>Ballot secrecy.</strong> Your identity is verified
+          separately from your ballot. Once submitted, no one — including
+          election officials — can trace your selections back to you.
+        </li>
+        <li>
+          <strong>No vote buying or canvassing.</strong> Offering, requesting,
+          or accepting money, gifts, or favours in exchange for a vote is
+          strictly prohibited and will be reported to the Electoral Committee.
+        </li>
+        <li>
+          <strong>No impersonation.</strong> Voting with another student's
+          matriculation number, password, or email address is a serious
+          offence and may lead to disciplinary action.
+        </li>
+        <li>
+          <strong>Accurate information.</strong> You are responsible for
+          entering only your own matriculation number and university email.
+          False information may invalidate your ballot.
+        </li>
+        <li>
+          <strong>Confidential OTP.</strong> Your one-time verification code
+          is private. Never share it with anyone, including persons claiming
+          to be election officials.
+        </li>
+        <li>
+          <strong>Final submission.</strong> Once you submit your ballot, it
+          cannot be edited, withdrawn, or resubmitted, so review your choices
+          carefully before confirming.
+        </li>
+        <li>
+          <strong>Reporting concerns.</strong> If you experience a problem or
+          witness misconduct during voting, report it to the Electoral
+          Committee through the "Need help?" button or official BOUESTI SUG
+          channels.
+        </li>
+      </ol>
+    </div>
+
+    <label class="confirm-check">
+      <input type="checkbox" id="agreeRules" disabled />
+      <span>I have read and agree to abide by the election rules above.</span>
+    </label>
+
+    <p class="form-message" id="rulesMessage" role="alert"></p>
+
+    <div class="rules-actions">
+      <button class="text-button" type="button" id="declineRules">
+        Decline &amp; log out
+      </button>
+      <button class="button primary" type="button" id="acceptRules" disabled>
+        Accept &amp; continue <span>→</span>
+      </button>
+    </div>
+  </dialog>
+
+  <dialog id="helpDialog">
+    <button class="dialog-close" id="closeHelp" aria-label="Close help">×</button>
+    <h2>Need help voting?</h2>
+    <p class="muted">
+      Tell the Electoral Committee what went wrong and they will look into it.
+      Please do <strong>not</strong> include your password or verification code.
+    </p>
+
+    <form id="problemForm" novalidate>
+      <label for="problemCategory">What kind of problem?</label>
+      <select id="problemCategory">
+        <option value="login">I can't log in</option>
+        <option value="otp">I didn't receive my code</option>
+        <option value="ballot">Problem with the ballot</option>
+        <option value="other">Something else</option>
+      </select>
+
+      <label for="problemMessage">Describe the problem</label>
+      <textarea id="problemMessage" rows="4" maxlength="1000" placeholder="What happened? What did you see on screen?"></textarea>
+
+      <label for="problemContact">How can we reach you? (optional)</label>
+      <input id="problemContact" type="text" maxlength="120" placeholder="Phone number or email" />
+
+      <p class="form-message" id="problemStatus" role="alert"></p>
+
+      <button class="button primary" type="submit">Send to the Electoral Committee</button>
+    </form>
+
+    <hr class="dialog-rule" />
+
+    <form id="receiptForm" novalidate>
+      <label for="receiptInput">Check a ballot receipt</label>
+      <input id="receiptInput" type="text" maxlength="40" placeholder="BOUESTI-2026-XXXXX-XXXXX" />
+      <p class="form-message" id="receiptStatus" role="status"></p>
+      <button class="button secondary" type="submit">Check receipt</button>
+    </form>
+  </dialog>
+
+  <script src="shared.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,845 @@
+:root {
+  --ink: #102e3c;
+  --forest: #0b3a46;
+  --cream: #eaf2f4;
+  --card: #fcfdfb;
+  --line: #c8d7d9;
+  --muted: #526c71;
+  --coral: #d86f4d;
+  --success: #248253;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* The hidden attribute must always win. Without this, any element that has its
+   own display rule (a flex banner, a grid) stays visible even when the page
+   script has set hidden — which showed students "Your vote has been recorded"
+   before they had voted. */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font: 16px/1.5 "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background:
+    radial-gradient(circle at 9% 12%, #c9e1dc 0, transparent 28rem),
+    radial-gradient(circle at 92% 88%, #f0cda0 0, transparent 32rem),
+    linear-gradient(145deg, #dce8ee 0%, #eff3eb 48%, #d0dfd8 100%);
+}
+
+a {
+  color: inherit;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+}
+
+.skip-link:focus {
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  padding: .7rem 1rem;
+  color: white;
+  background: var(--forest);
+}
+
+.site-header {
+  height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 max(5vw, 1.5rem);
+  border-bottom: 1px solid #d6e1df;
+  background: #f9fcfae8;
+  backdrop-filter: blur(10px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.brand > span:last-child span {
+  color: var(--coral);
+}
+
+.brand-mark {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  color: white;
+  background: var(--forest);
+  border-radius: 50%;
+}
+
+.election-status {
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 5px;
+  background: #36a06c;
+  border-radius: 50%;
+}
+
+.status-dot--closed {
+  background: var(--coral);
+}
+
+.text-button {
+  padding: 0;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.hero {
+  max-width: 760px;
+  padding: 65px 1rem 42px;
+  margin: auto;
+  text-align: center;
+}
+
+.eyebrow,
+.section-label {
+  margin: 0 0 .65rem;
+  color: #b9573b;
+  font-size: .71rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin: 0;
+  color: var(--ink);
+  font: 700 clamp(2.4rem, 6vw, 4.6rem)/1.05 "Playfair Display", Georgia, "Times New Roman", serif;
+  letter-spacing: -.045em;
+  text-shadow: 0 2px 0 #ffffffaa;
+}
+
+.hero > p:last-child {
+  max-width: 520px;
+  margin: 1.1rem auto 0;
+  color: var(--muted);
+}
+
+.vote-confirmation {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .7rem 1rem;
+  margin-bottom: 1.4rem;
+  text-align: left;
+  background: #e1f2e6;
+  border: 1px solid #bfe0cb;
+  border-radius: 4px;
+}
+
+.vote-confirmation-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  color: var(--success);
+  font-size: .95rem;
+  font-weight: 700;
+  background: white;
+  border-radius: 50%;
+}
+
+.vote-confirmation p {
+  margin: 0;
+  flex: 1;
+  color: var(--ink);
+  font-size: .86rem;
+}
+
+.vote-confirmation-close {
+  padding: 0;
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.voting-shell {
+  max-width: 850px;
+  padding: 0 1rem;
+  margin: 0 auto 72px;
+}
+
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: clamp(.5rem, 4vw, 3rem);
+  padding: 0 0 22px;
+  margin: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  color: #849497;
+  font-size: .78rem;
+}
+
+.step span {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  font-weight: 700;
+  border: 1px solid #a9babc;
+  border-radius: 50%;
+}
+
+.step.active {
+  color: var(--ink);
+}
+
+.step.active span {
+  color: white;
+  background: var(--forest);
+  border-color: var(--forest);
+}
+
+.card {
+  padding: clamp(1.35rem, 5vw, 3rem);
+  background: #fcfdfbe8;
+  border: 1px solid #c4d4d2;
+  border-radius: 5px;
+  box-shadow: 0 22px 55px #173d4640;
+  backdrop-filter: blur(12px);
+}
+
+.panel {
+  display: none;
+  max-width: 620px;
+  margin: auto;
+}
+
+.active-panel {
+  display: block;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.panel-heading h2,
+.success-panel h2 {
+  margin: 0;
+  font: 700 clamp(1.5rem, 3vw, 2rem)/1.15 "Playfair Display", Georgia, "Times New Roman", serif;
+}
+
+.icon-circle {
+  display: grid;
+  width: 45px;
+  height: 45px;
+  flex: 0 0 45px;
+  place-items: center;
+  color: var(--forest);
+  font-size: 1.3rem;
+  background: #dfeee9;
+  border-radius: 50%;
+}
+
+.muted {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+}
+
+.panel form {
+  margin-top: 1.4rem;
+}
+
+label:not(.candidate):not(.confirm-check) {
+  display: block;
+  margin: 1rem 0 .35rem;
+  font-size: .86rem;
+  font-weight: 700;
+}
+
+input:not([type="radio"]):not([type="checkbox"]) {
+  width: 100%;
+  padding: .82rem .9rem;
+  color: var(--ink);
+  font: inherit;
+  background: white;
+  border: 1px solid #afc2c3;
+  border-radius: 3px;
+}
+
+input:focus {
+  outline: 3px solid #a9cfca99;
+  border-color: var(--forest);
+}
+
+input:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.field-note,
+.small-print,
+.demo-note {
+  margin: .4rem 0;
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: .7rem;
+  padding: .87rem 1rem;
+  margin-top: 1.3rem;
+  font: 700 .95rem "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid var(--forest);
+  border-radius: 3px;
+}
+
+.primary {
+  color: white;
+  background: var(--forest);
+}
+
+.primary:hover {
+  background: #165462;
+}
+
+.secondary {
+  color: var(--forest);
+  background: white;
+}
+
+.security-note {
+  display: flex;
+  gap: .7rem;
+  padding-top: 1.2rem;
+  margin-top: 1.6rem;
+  color: var(--muted);
+  font-size: .78rem;
+  border-top: 1px solid var(--line);
+}
+
+.security-note span {
+  color: var(--forest);
+  font-size: 1.2rem;
+}
+
+.security-note p {
+  margin: 0;
+}
+
+.security-note strong {
+  color: var(--ink);
+}
+
+.election-closed-notice {
+  padding: .8rem 1rem;
+  margin-bottom: 1.2rem;
+  color: var(--ink);
+  font-size: .86rem;
+  text-align: left;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.back {
+  padding: 0;
+  margin-bottom: 1.5rem;
+  color: var(--ink);
+  font-weight: 700;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.otp-input {
+  padding-left: .7em !important;
+  font-size: 2rem !important;
+  letter-spacing: .5em;
+  text-align: center;
+}
+
+.resend-row {
+  display: flex;
+  justify-content: center;
+  gap: .3rem;
+  margin-top: 1.2rem;
+  color: var(--muted);
+  font-size: .84rem;
+}
+
+#resendButton:disabled {
+  color: var(--muted);
+  text-decoration: none;
+  cursor: not-allowed;
+  opacity: .7;
+}
+
+kbd {
+  padding: .15rem .35rem;
+  color: var(--forest);
+  background: #dcebe6;
+  border-radius: 3px;
+}
+
+.form-message {
+  min-height: 1.25rem;
+  margin: .6rem 0 0;
+  color: #b63d35;
+  font-size: .82rem;
+}
+
+fieldset {
+  padding: 0;
+  margin: 1.7rem 0;
+  border: 0;
+}
+
+legend {
+  margin-bottom: .7rem;
+  font-weight: 700;
+}
+
+.candidate-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+}
+
+.candidate {
+  position: relative;
+  display: flex;
+  min-height: 82px;
+  align-items: center;
+  gap: .7rem;
+  padding: .7rem;
+  cursor: pointer;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+
+.candidate:hover {
+  border-color: #64949a;
+  box-shadow: 0 8px 18px #173d4617;
+  transform: translateY(-2px);
+}
+
+.candidate input {
+  position: absolute;
+  opacity: 0;
+}
+
+.candidate:has(input:checked) {
+  background: #e5f1ed;
+  border-color: var(--forest);
+}
+
+.candidate-photo {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  object-fit: cover;
+  background: #d7e5e7;
+  border: 2px solid #c2d7d2;
+  border-radius: 50%;
+}
+
+.candidate strong,
+.candidate small {
+  display: block;
+}
+
+.candidate small {
+  color: var(--muted);
+  font-size: .68rem;
+}
+
+.photo-note {
+  color: #9b6448 !important;
+  font-style: italic;
+}
+
+.candidate i {
+  display: none;
+  margin-left: auto;
+  color: var(--forest);
+  font-style: normal;
+}
+
+.candidate:has(input:checked) i {
+  display: block;
+}
+
+.review-list {
+  margin: 1.5rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.review-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .9rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.review-list dt {
+  color: var(--muted);
+}
+
+.review-list dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
+
+.confirm-check {
+  display: flex;
+  align-items: flex-start;
+  gap: .65rem;
+  margin: 1.3rem 0;
+  font-size: .9rem;
+  cursor: pointer;
+}
+
+.confirm-check input {
+  margin-top: .25rem;
+  accent-color: var(--forest);
+}
+
+.success-panel {
+  max-width: 470px;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.success-mark {
+  display: grid;
+  width: 68px;
+  height: 68px;
+  place-items: center;
+  margin: 0 auto 1.4rem;
+  color: var(--success);
+  font-size: 2.2rem;
+  background: #e1f2e6;
+  border-radius: 50%;
+}
+
+.receipt {
+  padding: .85rem 1rem;
+  margin: 1.5rem 0;
+  font-size: .82rem;
+  background: #e8f2ed;
+}
+
+.receipt span {
+  margin-right: .5rem;
+  color: var(--muted);
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem max(5vw, 1.5rem);
+  color: var(--muted);
+  font-size: .75rem;
+  text-align: center;
+  border-top: 1px solid #d6e1df;
+}
+
+dialog {
+  max-width: 430px;
+  padding: 2rem;
+  color: var(--ink);
+  border: 0;
+  border-radius: 5px;
+  box-shadow: 0 15px 60px #0005;
+}
+
+dialog::backdrop {
+  background: #0c282599;
+}
+
+dialog h2 {
+  margin: 0 0 .5rem;
+  font: 700 1.5rem/1.15 "Playfair Display", Georgia, "Times New Roman", serif;
+}
+
+#rulesDialog {
+  width: min(560px, 92vw);
+  max-width: none;
+  max-height: 85vh;
+  overflow: auto;
+}
+
+.rules-body {
+  max-height: 38vh;
+  padding-right: .6rem;
+  margin: 1rem 0;
+  overflow-y: auto;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.rules-list {
+  display: grid;
+  gap: .85rem;
+  padding-left: 1.1rem;
+  margin: 1rem 0;
+}
+
+.rules-list li {
+  line-height: 1.55;
+}
+
+.rules-list strong {
+  color: var(--forest);
+}
+
+.rules-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.rules-actions .button {
+  width: auto;
+  margin-top: 0;
+}
+
+.dialog-close {
+  float: right;
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+@media (max-width: 600px) {
+  .site-header {
+    height: 65px;
+  }
+
+  .election-status {
+    display: none;
+  }
+
+  .hero {
+    padding-top: 45px;
+  }
+
+  .steps {
+    justify-content: space-between;
+    gap: .35rem;
+  }
+
+  .step b {
+    display: none;
+  }
+
+  .candidate-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-photo {
+    width: 46px;
+    height: 46px;
+    flex-basis: 46px;
+  }
+
+  footer {
+    flex-direction: column;
+  }
+}
+/* ---------- additions: rehearsal banner, published results, help dialog ---------- */
+
+.rehearsal-banner {
+  padding: .6rem max(5vw, 1.5rem);
+  color: #6b3d0b;
+  font-size: .82rem;
+  text-align: center;
+  background: #fbe8c8;
+  border-bottom: 1px solid #ecc98f;
+}
+
+.signed-in-as {
+  padding: .65rem .85rem;
+  margin: 0 0 .4rem;
+  color: var(--muted);
+  font-size: .84rem;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.signed-in-as strong {
+  color: var(--ink);
+}
+
+.form-message--ok {
+  color: var(--success);
+}
+
+textarea,
+select {
+  width: 100%;
+  padding: .75rem .9rem;
+  color: var(--ink);
+  font: inherit;
+  background: white;
+  border: 1px solid #afc2c3;
+  border-radius: 3px;
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+textarea:focus,
+select:focus {
+  outline: 3px solid #a9cfca99;
+  border-color: var(--forest);
+}
+
+.dialog-rule {
+  margin: 1.4rem 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.results-section {
+  max-width: 760px;
+  padding: 0 1rem;
+  margin: 0 auto 2rem;
+}
+
+.results-card h2 {
+  margin: 0 0 .3rem;
+  font: 700 clamp(1.5rem, 3vw, 2rem)/1.15 "Playfair Display", Georgia, "Times New Roman", serif;
+}
+
+.results-card .muted {
+  margin-bottom: 1rem;
+}
+
+.results-card .result-office {
+  margin-top: 1.5rem;
+}
+
+.results-card .result-office h3 {
+  margin: 0 0 .8rem;
+  font-size: 1rem;
+}
+
+.results-card .result-rows {
+  display: grid;
+  gap: .9rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.results-card .result-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "name votes"
+    "bar bar";
+  gap: .3rem .8rem;
+  align-items: baseline;
+}
+
+.results-card .result-name {
+  grid-area: name;
+  font-weight: 700;
+}
+
+.results-card .result-votes {
+  grid-area: votes;
+  color: var(--muted);
+  font-size: .82rem;
+  white-space: nowrap;
+}
+
+.results-card .result-bar {
+  display: block;
+  grid-area: bar;
+  height: 8px;
+  overflow: hidden;
+  background: #e4ecec;
+  border-radius: 4px;
+}
+
+.results-card .result-bar i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: #9db7b9;
+  border-radius: 4px;
+  transition: width .4s ease;
+}
+
+.results-card .result-row--leading .result-bar i {
+  background: var(--forest);
+}
+
+.results-card .result-row--leading .result-name small {
+  color: var(--success);
+}

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Dashboard · BOUESTI Vote</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+
+  <body>
+    <header class="admin-topbar">
+      <a class="brand" href="/dashboard.html" aria-label="BOUESTI Vote dashboard">
+        <span class="brand-mark">✓</span>
+        <span>BOUESTI <span>Vote</span> <small>Electoral Committee</small></span>
+      </a>
+
+      <div class="admin-who">
+        <span><strong id="whoName">…</strong></span>
+        <span class="pill pill--role" id="whoRole"></span>
+        <span class="session-timer" id="sessionTimer" aria-live="off"></span>
+      </div>
+    </header>
+
+    <div class="session-banner" id="sessionBanner" role="status" hidden>
+      <span id="sessionBannerText"></span>
+      <button class="text-button" id="sessionStay" type="button">Stay signed in</button>
+    </div>
+
+    <div class="admin-shell">
+      <div class="admin-layout">
+        <aside class="admin-sidebar" aria-label="Dashboard sections">
+          <nav>
+            <ul class="admin-nav" id="adminNav"></ul>
+          </nav>
+        </aside>
+
+        <main class="admin-content" id="adminContent">
+
+          <section class="admin-view" id="view-dashboard">
+            <div class="admin-view-heading">
+              <h2>Dashboard</h2>
+              <p>The election at a glance. This page refreshes by itself.</p>
+            </div>
+            <div id="body-dashboard"></div>
+          </section>
+
+          <section class="admin-view" id="view-election">
+            <div class="admin-view-heading">
+              <h2>Election</h2>
+              <p>Name, schedule, status and mode of this election.</p>
+            </div>
+            <div id="body-election"></div>
+          </section>
+
+          <section class="admin-view" id="view-students">
+            <div class="admin-view-heading">
+              <h2>Voters / Students</h2>
+              <p>The roster, and how far each student has got: registered (rules accepted), verified (e-mail code confirmed), voted.</p>
+            </div>
+            <div id="body-students"></div>
+          </section>
+
+          <section class="admin-view" id="view-candidates">
+            <div class="admin-view-heading">
+              <h2>Candidates</h2>
+              <p>Positions and the candidates standing for them.</p>
+            </div>
+            <div id="body-candidates"></div>
+          </section>
+
+          <section class="admin-view" id="view-statistics">
+            <div class="admin-view-heading">
+              <h2>Voting Statistics</h2>
+              <p>Turnout while voting is open. Counts only — nobody's choice and no individual's voting time is shown.</p>
+            </div>
+            <div id="body-statistics"></div>
+          </section>
+
+          <section class="admin-view" id="view-results">
+            <div class="admin-view-heading">
+              <h2>Results</h2>
+              <p>Counted results, the signed report, and independent verification.</p>
+            </div>
+            <div id="body-results"></div>
+          </section>
+
+          <section class="admin-view" id="view-notifications">
+            <div class="admin-view-heading">
+              <h2>Notifications</h2>
+              <p>The notice students see on the voting page, and the problems they report.</p>
+            </div>
+            <div id="body-notifications"></div>
+          </section>
+
+          <section class="admin-view" id="view-audit">
+            <div class="admin-view-heading">
+              <h2>Activity / Audit Logs</h2>
+              <p>A tamper-evident record of what happened. Reading it is itself recorded.</p>
+            </div>
+            <div id="body-audit"></div>
+          </section>
+
+          <section class="admin-view" id="view-settings">
+            <div class="admin-view-heading">
+              <h2>Settings</h2>
+              <p>School name and who may sign in to vote.</p>
+            </div>
+            <div id="body-settings"></div>
+          </section>
+
+          <section class="admin-view" id="view-admins">
+            <div class="admin-view-heading">
+              <h2>Administrators</h2>
+              <p>Who can sign in here, with which role, and recovery of locked accounts.</p>
+            </div>
+            <div id="body-admins"></div>
+          </section>
+
+          <section class="admin-view" id="view-ops">
+            <div class="admin-view-heading">
+              <h2>Operations</h2>
+              <p>Monitoring during voting, go-live checklist, encrypted backups, restoration drills and incidents.</p>
+            </div>
+            <div id="body-ops"></div>
+          </section>
+
+          <section class="admin-view" id="view-account">
+            <div class="admin-view-heading">
+              <h2>My account</h2>
+              <p>Your password, two-factor sign-in, recovery codes and sessions.</p>
+            </div>
+            <div id="body-account"></div>
+          </section>
+
+        </main>
+      </div>
+    </div>
+
+    <!-- A fresh two-factor code, for sensitive actions -->
+    <dialog id="stepUpDialog">
+      <form id="stepUpForm" novalidate>
+        <h2>Confirm it is you</h2>
+        <p class="dialog-text">
+          This action needs a fresh code. Type the 6-digit code from your authenticator app
+          (or one of your recovery codes).
+        </p>
+        <label for="stepUpCode">Code</label>
+        <input id="stepUpCode" type="text" autocomplete="one-time-code" maxlength="24" />
+        <p class="form-message" id="stepUpMessage" role="alert"></p>
+        <div class="dialog-actions">
+          <button class="button secondary" id="stepUpCancel" type="button">Cancel</button>
+          <button class="button primary" type="submit">Confirm</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- "Are you sure?" with an optional typed phrase -->
+    <dialog id="confirmDialog">
+      <form id="confirmForm" novalidate>
+        <h2 id="confirmTitle"></h2>
+        <p class="dialog-text" id="confirmBody"></p>
+        <div id="confirmPhraseBox" hidden>
+          <label for="confirmPhrase" id="confirmPhraseLabel"></label>
+          <input id="confirmPhrase" type="text" autocomplete="off" />
+        </div>
+        <p class="form-message" id="confirmMessage" role="alert"></p>
+        <div class="dialog-actions">
+          <button class="button secondary" id="confirmCancel" type="button">Cancel</button>
+          <button class="button primary" id="confirmOk" type="submit">Confirm</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Ask for a line or two of text -->
+    <dialog id="promptDialog">
+      <form id="promptForm" novalidate>
+        <h2 id="promptTitle"></h2>
+        <p class="dialog-text" id="promptIntro"></p>
+        <label for="promptInput" id="promptLabel"></label>
+        <textarea id="promptInput" rows="3" maxlength="1000"></textarea>
+        <p class="form-message" id="promptMessage" role="alert"></p>
+        <div class="dialog-actions">
+          <button class="button secondary" id="promptCancel" type="button">Cancel</button>
+          <button class="button primary" id="promptOk" type="submit">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Something shown once: a temporary password, a reset code, recovery codes -->
+    <dialog id="secretDialog" class="dialog-wide">
+      <h2 id="secretTitle"></h2>
+      <p class="dialog-text" id="secretIntro"></p>
+      <pre class="code-box" id="secretBox"></pre>
+      <p class="small-print" id="secretNote"></p>
+      <div class="dialog-actions">
+        <button class="button secondary" id="secretCopy" type="button">Copy</button>
+        <button class="button primary" id="secretClose" type="button">I have saved it</button>
+      </div>
+    </dialog>
+
+    <!-- The witness for a supervised comparison signs in again -->
+    <dialog id="witnessDialog">
+      <form id="witnessForm" novalidate>
+        <h2>Supervised comparison</h2>
+        <p class="dialog-text" id="witnessIntro"></p>
+        <label for="witnessEmail">Witness e-mail</label>
+        <input id="witnessEmail" type="email" autocomplete="off" />
+        <label for="witnessPassword">Witness password</label>
+        <input id="witnessPassword" type="password" autocomplete="off" />
+        <label for="witnessCode">Witness 2FA code</label>
+        <input id="witnessCode" type="text" autocomplete="off" maxlength="24" />
+        <p class="form-message" id="witnessMessage" role="alert"></p>
+        <div class="dialog-actions">
+          <button class="button secondary" id="witnessCancel" type="button">Cancel</button>
+          <button class="button primary" id="witnessOk" type="submit">Run comparison</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Read-only detail -->
+    <dialog id="infoDialog" class="dialog-wide">
+      <h2 id="infoTitle"></h2>
+      <div id="infoBody"></div>
+      <div class="dialog-actions">
+        <button class="button primary" id="infoClose" type="button">Close</button>
+      </div>
+    </dialog>
+
+    <div class="toast-stack" id="toasts" aria-live="polite"></div>
+
+    <script src="shared.js"></script>
+    <script src="dashboard.js"></script>
+  </body>
+</html>

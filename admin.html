@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Electoral Committee sign-in · BOUESTI Vote</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="BOUESTI Vote home">
+        <span class="brand-mark">✓</span>
+        <span>BOUESTI <span>Vote</span></span>
+      </a>
+      <a class="text-button" href="/">← Back to the voting site</a>
+    </header>
+
+    <main class="admin-login-shell">
+      <div class="card admin-login-card">
+
+        <!-- 1. E-mail and password -->
+        <section id="signinPanel">
+          <p class="section-label">Electoral Committee</p>
+          <h1 class="admin-title">Administrator sign-in</h1>
+          <p class="muted">Only appointed officers may sign in here. Every sign-in is recorded.</p>
+
+          <form id="signinForm" novalidate>
+            <label for="adminEmail">E-mail address</label>
+            <input id="adminEmail" type="email" autocomplete="username" required />
+
+            <label for="adminPassword">Password</label>
+            <input id="adminPassword" type="password" autocomplete="current-password" required />
+
+            <p class="form-message" id="signinMessage" role="alert"></p>
+            <button class="button primary" id="signinButton" type="submit">Continue</button>
+          </form>
+
+          <p class="resend-row">
+            <button class="text-button" id="showReset" type="button">Forgot your password?</button>
+          </p>
+        </section>
+
+        <!-- 2. First use: choose your own password -->
+        <section id="passwordPanel" hidden>
+          <p class="section-label">First sign-in · step 1 of 2</p>
+          <h1 class="admin-title">Choose your own password</h1>
+          <p class="muted">
+            The password you were given works only once. Choose one that only you know:
+            a long phrase is better than a short complicated word.
+          </p>
+
+          <form id="passwordForm" novalidate>
+            <label for="newPassword">New password</label>
+            <input id="newPassword" type="password" autocomplete="new-password" required />
+
+            <label for="newPasswordAgain">Type it again</label>
+            <input id="newPasswordAgain" type="password" autocomplete="new-password" required />
+
+            <p class="form-message" id="passwordMessage" role="alert"></p>
+            <button class="button primary" type="submit">Save password</button>
+          </form>
+
+          <p class="resend-row"><button class="text-button" data-action="start-over" type="button">Use a different account</button></p>
+        </section>
+
+        <!-- 3. First use: two-factor set-up -->
+        <section id="enrollPanel" hidden>
+          <p class="section-label">First sign-in · step 2 of 2</p>
+          <h1 class="admin-title">Set up two-factor sign-in</h1>
+          <p class="muted">
+            Install an authenticator app on your phone (Google Authenticator, Microsoft Authenticator,
+            Authy or similar), add a new account with the key below, then type the 6-digit code it shows.
+          </p>
+
+          <div class="enroll-box">
+            <p class="enroll-label">Setup key</p>
+            <p class="enroll-secret" id="enrollSecret" aria-live="polite">Loading…</p>
+            <p class="small-print">
+              Account: <span id="enrollAccount"></span> · type: time-based (TOTP), 6 digits, 30 seconds.
+              On a phone you can also
+              <a id="enrollLink" href="#">open the link in your authenticator app</a>.
+            </p>
+          </div>
+
+          <form id="enrollForm" novalidate>
+            <label for="enrollCode">6-digit code from the app</label>
+            <input id="enrollCode" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required />
+
+            <p class="form-message" id="enrollMessage" role="alert"></p>
+            <button class="button primary" type="submit">Turn on two-factor</button>
+          </form>
+
+          <p class="resend-row"><button class="text-button" data-action="start-over" type="button">Use a different account</button></p>
+        </section>
+
+        <!-- 4. Every later sign-in -->
+        <section id="totpPanel" hidden>
+          <p class="section-label">Two-factor check</p>
+          <h1 class="admin-title">Enter your code</h1>
+          <p class="muted">
+            Open your authenticator app and type the current 6-digit code.
+            If you have lost your phone, use one of your recovery codes instead.
+          </p>
+
+          <form id="totpForm" novalidate>
+            <label for="totpCode">6-digit code or recovery code</label>
+            <input id="totpCode" class="otp-input" type="text" autocomplete="one-time-code" maxlength="24" required />
+
+            <p class="form-message" id="totpMessage" role="alert"></p>
+            <button class="button primary" type="submit">Sign in</button>
+          </form>
+
+          <p class="resend-row"><button class="text-button" data-action="start-over" type="button">Use a different account</button></p>
+        </section>
+
+        <!-- 5. Recovery codes (shown once) -->
+        <section id="recoveryPanel" hidden>
+          <p class="section-label">Two-factor is on</p>
+          <h1 class="admin-title">Save your recovery codes</h1>
+          <p class="muted">
+            If you ever lose your phone, each of these codes lets you sign in once.
+            They are shown only now. Keep them somewhere safe and private — not on the same phone.
+          </p>
+
+          <ul class="recovery-codes" id="recoveryList"></ul>
+
+          <div class="recovery-actions">
+            <button class="button secondary" id="copyRecovery" type="button">Copy codes</button>
+            <button class="button secondary" id="downloadRecovery" type="button">Download as text file</button>
+          </div>
+
+          <label class="confirm-check" for="recoverySaved">
+            <input id="recoverySaved" type="checkbox" />
+            <span>I have saved my recovery codes.</span>
+          </label>
+
+          <button class="button primary" id="recoveryContinue" type="button" disabled>Go to the dashboard</button>
+        </section>
+
+        <!-- 6. Forgot password -->
+        <section id="resetPanel" hidden>
+          <p class="section-label">Password reset</p>
+          <h1 class="admin-title">Reset your password</h1>
+          <p class="muted">
+            An Electoral Officer can give you a one-time reset code in person.
+            Enter it here with your e-mail and a new password.
+          </p>
+
+          <form id="resetForm" novalidate>
+            <label for="resetEmail">E-mail address</label>
+            <input id="resetEmail" type="email" autocomplete="username" required />
+
+            <label for="resetCode">One-time reset code</label>
+            <input id="resetCode" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" required />
+
+            <label for="resetPassword">New password</label>
+            <input id="resetPassword" type="password" autocomplete="new-password" required />
+
+            <label for="resetPasswordAgain">Type it again</label>
+            <input id="resetPasswordAgain" type="password" autocomplete="new-password" required />
+
+            <p class="form-message" id="resetMessage" role="alert"></p>
+            <button class="button primary" type="submit">Change password</button>
+          </form>
+
+          <p class="resend-row"><button class="text-button" id="backToSignin" type="button">← Back to sign-in</button></p>
+        </section>
+
+        <!-- Interstitial notice (for example "you used a recovery code") -->
+        <section id="noticePanel" hidden>
+          <p class="section-label">Please note</p>
+          <h1 class="admin-title">Signed in</h1>
+          <p class="muted" id="noticeText"></p>
+          <button class="button primary" id="noticeContinue" type="button">Go to the dashboard</button>
+        </section>
+
+        <p class="security-note admin-security-note">
+          <span aria-hidden="true">⚿</span>
+          <span>
+            <strong>Private system.</strong> Signing in is protected by your password and a second code.
+            After several wrong attempts the account is locked for a short time.
+          </span>
+        </p>
+      </div>
+    </main>
+
+    <script src="shared.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
